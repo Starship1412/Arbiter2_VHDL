@@ -1,2 +1,2 @@
-# Arbiter2_VHDL
+# Arbiter
  
