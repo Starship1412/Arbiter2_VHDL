@@ -42,19 +42,23 @@ begin
 		case current_state is
 			when IDLE =>
 				gnt_temp <= "000";
+				counter <= "00";
 				if reset = '0' then
 					if cmd = '1' then
+						req_temp <= (others => '0');
 						next_state <= READY_1;
 					else
+						if falling_edge(cmd) then
+							req_temp <= req_delayed;
+						end if;
 						next_state <= IDLE;
 					end if;
 				else
-					next_state <= IDLE;
 					n1_temp <= (others => '0');
 					n2_temp <= (others => '0');
 					n3_temp <= (others => '0');
-					counter <= "00";
 					req_temp <= (others => '0');
+					next_state <= IDLE;
 				end if;
 			when READY_1 =>
 				gnt_temp <= "000";
@@ -93,6 +97,9 @@ begin
 			when GO =>
 				if cmd = '0' then
 				    next_state <= IDLE;
+				    if falling_edge(cmd) then
+ 						req_temp <= req_delayed;
+ 					end if;
 					if req_temp = "000" then
   						gnt_temp <= "000";
 					elsif req_temp = "001" then
@@ -150,7 +157,6 @@ begin
 						end if;
 					end if;
 				else
-					req_temp <= req;
 					counter <= "00";
 					next_state <= READY_1;
 				end if;
